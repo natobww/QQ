@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="avator_size">60dp</dimen>
+    <dimen name="login_textsize">22sp</dimen>
+</resources>

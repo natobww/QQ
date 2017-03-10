@@ -3,6 +3,8 @@ package com.example.bgfvg.qq.view;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.bgfvg.qq.MainActivity;
@@ -28,13 +30,10 @@ public class SplashActivity extends BaseActivity implements SplashView {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         mSplashPresenter = new SplashPresenterImpl(this);
-
-
         /**
          * 判断是否登陆
          */
-        if (mSplashPresenter != null)
-            mSplashPresenter.checkLogined();
+        mSplashPresenter.checkLogined();
     }
 
     @Override
@@ -43,16 +42,27 @@ public class SplashActivity extends BaseActivity implements SplashView {
             //已登录
             startActivity(MainActivity.class, true);
         } else {
-            //未登录
-            ObjectAnimator alpha = ObjectAnimator.ofFloat(mIvSplash, "alpha", 0, 1).setDuration(DURATION);
-            alpha.start();
-            alpha.addListener(new AnimatorListenerAdapter() {
+            /*try{
+                //未登录
+                ObjectAnimator alpha = ObjectAnimator.ofFloat(mIvSplash, "alpha", 0, 1).setDuration(DURATION);
+                alpha.start();
+                alpha.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        startActivity(LoginActivity.class, true);
+                    }
+                });
+            }catch(Exception e){
+                Log.e("qw", "SplashActivity.onCheckedLogin.error== "+e.getMessage());
+                e.printStackTrace();
+            }*/
+            new Handler().postDelayed(new Runnable() {
                 @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
+                public void run() {
                     startActivity(LoginActivity.class, true);
                 }
-            });
+            }, 2000);
         }
     }
 }

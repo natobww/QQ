@@ -10,6 +10,8 @@ import com.hyphenate.chat.EMOptions;
 import java.util.Iterator;
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
+
 /**
  * Created by BGFVG on 2017/3/7.
  */
@@ -19,6 +21,11 @@ public class QQApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initHuanXin();
+        initBomb();
+    }
+
+    private void initBomb() {
+        Bmob.initialize(this, "8d44ceda8786932df707ce4ca6ba46b2");
     }
 
     private void initHuanXin() {
