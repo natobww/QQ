@@ -1,26 +1,37 @@
 package com.example.bgfvg.qq.view;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.bgfvg.qq.MainActivity;
 import com.example.bgfvg.qq.R;
+import com.example.bgfvg.qq.presenter.LoginPresenter;
+import com.example.bgfvg.qq.presenter.LoginPresenterImpl;
+import com.example.bgfvg.qq.utils.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements TextView.OnEditorActionListener, LoginView {
 
+    private static final int REQUEST_SD = 1001;
     @BindView(R.id.edt_username)
     EditText mEdtUsername;
     @BindView(R.id.til_username)
@@ -33,6 +44,7 @@ public class LoginActivity extends BaseActivity {
     Button mLogin;
     @BindView(R.id.tv_newuser)
     TextView mTvNewuser;
+    private LoginPresenter mLoginPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +66,8 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         echo();
-
+        mEdtPwd.setOnEditorActionListener(this);
+        mLoginPresenter = new LoginPresenterImpl(this);
     }
 
     private void echo() {
@@ -67,6 +80,8 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 再次启动activity的时候接受新的intent对象
+     * 前提是lauchMode是singleTask
+     *
      * @param intent
      */
     @Override
@@ -79,10 +94,76 @@ public class LoginActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login:
+                login();
                 break;
             case R.id.tv_newuser:
                 startActivity(RegistActivity.class, false);
                 break;
+        }
+    }
+
+    private void login() {
+        String username = mEdtUsername.getText().toString().trim();
+        String password = mEdtPwd.getText().toString().trim();
+        if (!StringUtils.checkUserName(username)) {
+            mTilUsername.setErrorEnabled(true);
+            mTilUsername.setError("用户名不合法");
+            mTilUsername.requestFocus(View.FOCUS_RIGHT);
+            return;
+        } else {
+            mTilUsername.setErrorEnabled(false);
+        }
+
+        if (!StringUtils.checkPassWord(password)) {
+            mTilPwd.setErrorEnabled(true);
+            mTilPwd.setError("密码不合法");
+            mEdtPwd.requestFocus(View.FOCUS_RIGHT);
+        } else {
+            mTilPwd.setErrorEnabled(false);
+        }
+        //检查动态权限的申请处理
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_SD);
+            return;
+        }
+        showDialog("正在玩命登录中...");
+        /**
+         * MVP实现登陆的逻辑
+         */
+        mLoginPresenter.login(username, password);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode==REQUEST_SD){
+            if (grantResults[0]==PermissionChecker.PERMISSION_GRANTED){
+                login();
+            }else{
+                showToast("您没有授予该应用访问SD权限");
+            }
+        }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (v.getId() == R.id.edt_pwd && actionId == EditorInfo.IME_ACTION_DONE) {
+            login();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void login(String username, String password, boolean isSuccess, String message) {
+        hideDialog();
+        if (isSuccess) {
+            //登陆成功保存SP
+            saveUser(username, password);
+            startActivity(MainActivity.class, true);
+        } else {
+            //登陆失败 Toast
+            showToast("登陆失败: " + message);
         }
     }
 }
