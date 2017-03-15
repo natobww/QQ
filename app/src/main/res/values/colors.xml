@@ -5,4 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="btn_normal">#00ACFF</color>
     <color name="btn_select">#00A1DB</color>
+    <color name="inactive">#B5B5B5</color>
+    <color name="loginout_normal">#ff0000</color>
+    <color name="loginout_select">#dd0000</color>
 </resources>

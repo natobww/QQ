@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -22,7 +21,7 @@ import android.widget.TextView;
 import com.example.bgfvg.qq.MainActivity;
 import com.example.bgfvg.qq.R;
 import com.example.bgfvg.qq.presenter.LoginPresenter;
-import com.example.bgfvg.qq.presenter.LoginPresenterImpl;
+import com.example.bgfvg.qq.presenter.impl.LoginPresenterImpl;
 import com.example.bgfvg.qq.utils.StringUtils;
 
 import butterknife.BindView;
@@ -31,7 +30,9 @@ import butterknife.OnClick;
 
 public class LoginActivity extends BaseActivity implements TextView.OnEditorActionListener, LoginView {
 
+    private static final int REQUEST_ALL = 1000;
     private static final int REQUEST_SD = 1001;
+    private static final int REQUEST_READPHONE = 1002;
     @BindView(R.id.edt_username)
     EditText mEdtUsername;
     @BindView(R.id.til_username)
@@ -122,24 +123,32 @@ public class LoginActivity extends BaseActivity implements TextView.OnEditorActi
             mTilPwd.setErrorEnabled(false);
         }
         //检查动态权限的申请处理
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_SD);
+        boolean SDPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED;
+        boolean ReadPhonePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PermissionChecker.PERMISSION_GRANTED;
+        boolean ReadSMSPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PermissionChecker.PERMISSION_GRANTED;
+        if (SDPermission) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_ALL);
             return;
         }
         showDialog("正在玩命登录中...");
         /**
          * MVP实现登陆的逻辑
          */
-        mLoginPresenter.login(username, password);
+        try {
+            mLoginPresenter.login(username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode==REQUEST_SD){
-            if (grantResults[0]==PermissionChecker.PERMISSION_GRANTED){
+        if (requestCode == REQUEST_ALL) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
                 login();
-            }else{
+            } else {
                 showToast("您没有授予该应用访问SD权限");
             }
         }

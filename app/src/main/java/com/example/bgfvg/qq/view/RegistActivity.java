@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.example.bgfvg.qq.R;
 import com.example.bgfvg.qq.presenter.RegistPresenter;
-import com.example.bgfvg.qq.presenter.RegistPresenterImpl;
+import com.example.bgfvg.qq.presenter.impl.RegistPresenterImpl;
 import com.example.bgfvg.qq.utils.StringUtils;
 
 import butterknife.BindView;

@@ -1,6 +1,7 @@
-package com.example.bgfvg.qq.presenter;
+package com.example.bgfvg.qq.presenter.impl;
 
 import com.example.bgfvg.qq.model.User;
+import com.example.bgfvg.qq.presenter.RegistPresenter;
 import com.example.bgfvg.qq.utils.StringUtils;
 import com.example.bgfvg.qq.utils.ThreadUtils;
 import com.example.bgfvg.qq.view.RegistView;

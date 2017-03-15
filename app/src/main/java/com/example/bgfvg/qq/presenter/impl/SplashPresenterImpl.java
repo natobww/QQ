@@ -1,5 +1,6 @@
-package com.example.bgfvg.qq.presenter;
+package com.example.bgfvg.qq.presenter.impl;
 
+import com.example.bgfvg.qq.presenter.SplashPresenter;
 import com.example.bgfvg.qq.view.SplashView;
 import com.hyphenate.chat.EMClient;
 
