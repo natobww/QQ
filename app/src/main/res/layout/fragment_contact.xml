@@ -4,10 +4,11 @@
              android:layout_height="match_parent"
              tools:context="com.example.bgfvg.qq.view.ContactFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.example.bgfvg.qq.view.widget.ContactLayout
+        android:id="@+id/contact_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="联系人Fragment"/>
+        android:layout_height="match_parent">
+
+    </com.example.bgfvg.qq.view.widget.ContactLayout>
 
 </FrameLayout>

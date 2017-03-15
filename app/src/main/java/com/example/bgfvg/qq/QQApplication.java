@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.pm.PackageManager;
 
+import com.example.bgfvg.qq.db.DBUtils;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
@@ -22,6 +23,11 @@ public class QQApplication extends Application {
         super.onCreate();
         initHuanXin();
         initBomb();
+        initDB();
+    }
+
+    private void initDB() {
+        DBUtils.init(this);
     }
 
     private void initBomb() {
